@@ -65,6 +65,7 @@ parser = argparse.ArgumentParser(description="Check logcount discrepancies betwe
 parser.add_argument("--from_block", type=int, help="Optional starting block (will snap to nearest if not exact)")
 parser.add_argument("--to_block", type=int, help="Optional ending block (will snap to nearest if not exact)")
 parser.add_argument("--test_provider", type=str, help="Optional RPC endpoint to override default/provider env variable")
+parser.add_argument("--delete_rpc_data", action="store_true", help="Delete all discrepancy rows for this provider and exit")
 args, _ = parser.parse_known_args()
 
 # Environment variable fallback
@@ -185,6 +186,20 @@ def insert_discrepancy(conn, schema: Optional[str], table: str,
         )
     conn.commit()
 
+def delete_rpc_data(conn, schema: Optional[str], table: str, provider: str):
+    """
+    Delete all discrepancy rows for the given provider from the discrepancy table.
+    """
+    sch = schema or "public"
+    with conn.cursor() as cur:
+        cur.execute(
+            f'DELETE FROM "{sch}"."{table}" WHERE provider = %s;',
+            (provider,),
+        )
+        deleted = cur.rowcount
+    conn.commit()
+    print(f"🗑️ Deleted {deleted} rows for provider {provider!r} from {sch}.{table}")
+
 # --- NEW: nearest-window selection (unchanged comparison logic) ---
 def choose_window(ranges: List[Tuple[int,int,int]],
                   req_from: Optional[int],
@@ -219,6 +234,21 @@ def choose_window(ranges: List[Tuple[int,int,int]],
     return window
 
 def main():
+
+    if args.delete_rpc_data:
+        try:
+            disc_conn = psycopg2.connect(DB_URL)
+            ensure_discrepancy_table(disc_conn, DB_SCHEMA, DB_DISC_TABLE)
+            delete_rpc_data(disc_conn, DB_SCHEMA, DB_DISC_TABLE, PROVIDER)
+        except Exception as ex:
+            print(f"❌ Database error during deletion: {ex}")
+        finally:
+            try:
+                disc_conn.close()
+            except Exception:
+                pass
+        return  # Exit after deletion, skip RPC checks
+
     # Read all ranges from Postgres (source table auto-detected unless DB_TABLE provided)
     try:
         all_ranges = list(read_ranges_from_pg(DB_URL, explicit_table=DB_TABLE, schema=DB_SCHEMA))

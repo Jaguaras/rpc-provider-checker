@@ -74,3 +74,13 @@ First, the verification script will find block ranges that have discrepancies be
 ./narrow_block.py \
 --test_provider <TEST_RPC_PROVIDER>
 ```
+
+### Clear discrepancy data for a fixed RPC provider
+
+After an RPC provider has deployed a fix, you may want to wipe all previously recorded discrepancies for that endpoint and then re-run the verification over the same ranges. Use the `--delete_provider_data` flag to remove all rows for a given RPC endpoint from the discrepancies table:
+
+```bash
+./verify_logs.py \
+--test_provider <TEST_RPC_PROVIDER> \
+--delete_rpc_data
+```
