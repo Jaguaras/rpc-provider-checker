@@ -75,7 +75,7 @@ ENV_PROVIDER = os.getenv("TEST_PROVIDER", "https://gnosis-rpc.publicnode.com")
 # Final unified values
 REQ_FROM_BLOCK = args.from_block or (int(ENV_FROM_BLOCK) if ENV_FROM_BLOCK else None)
 REQ_TO_BLOCK   = args.to_block or (int(ENV_TO_BLOCK)   if ENV_TO_BLOCK   else None)
-PROVIDER       = args.provider or ENV_PROVIDER
+PROVIDER       = args.test_provider or ENV_PROVIDER
 
 SOURCE_NAME = DB_TABLE or (DB_SCHEMA + "." if DB_SCHEMA else "") + "(auto-detected)"
 

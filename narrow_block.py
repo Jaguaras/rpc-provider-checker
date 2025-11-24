@@ -50,6 +50,7 @@ DB_PORT = require_env("DB_PORT")
 DB_NAME = require_env("DB_NAME")
 DB_USER = require_env("DB_USER")
 DB_PASSWORD = require_env("DB_PASSWORD")
+REF_PROVIDER = require_env("REF_PROVIDER")
 
 DB_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
@@ -67,7 +68,7 @@ parser.add_argument("--ref_provider",  type=str, help="Reference RPC endpoint (d
 parser.add_argument("--test_provider", type=str, help="Test RPC endpoint (default/env TEST_PROVIDER)")
 args, _ = parser.parse_known_args()
 
-REF_PROVIDER  = args.ref_provider  or os.getenv("REF_PROVIDER",  REF_PROVIDER_DEFAULT)
+REF_PROVIDER  = args.ref_provider  or require_env("REF_PROVIDER")
 TEST_PROVIDER = args.test_provider or os.getenv("TEST_PROVIDER", TEST_PROVIDER_DEFAULT)
 
 # --- RPC helper (same style as before) ---
