@@ -15,8 +15,7 @@ Install python dependencies:
 ```bash
 sudo apt update
 sudo apt install -y python3 python3-pip
-pip install requests urllib3
-pip install requests
+pip install requests urllib3 psycopg2-binary
 ```
 
 ### Buildup blocks database
