@@ -28,7 +28,7 @@ def load_env_file(path: str = ".env") -> None:
 load_env_file(os.getenv("ENV_FILE", ".env"))
 
 # --- Configuration ---
-PROVIDER = os.getenv("PROVIDER", "https://gnosis-rpc.publicnode.com")
+PROVIDER = os.getenv("TEST_PROVIDER", "https://gnosis-rpc.publicnode.com")
 CONTRACT = os.getenv("CONTRACT", "0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d")
 TOPIC    = os.getenv("TOPIC",    "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef")
 
@@ -64,13 +64,13 @@ DB_DISC_TABLE = os.getenv("DB_DISC_TABLE", "rpc_discrepancies")
 parser = argparse.ArgumentParser(description="Check logcount discrepancies between RPC and Postgres ranges.")
 parser.add_argument("--from_block", type=int, help="Optional starting block (will snap to nearest if not exact)")
 parser.add_argument("--to_block", type=int, help="Optional ending block (will snap to nearest if not exact)")
-parser.add_argument("--provider", type=str, help="Optional RPC endpoint to override default/provider env variable")
+parser.add_argument("--test_provider", type=str, help="Optional RPC endpoint to override default/provider env variable")
 args, _ = parser.parse_known_args()
 
 # Environment variable fallback
 ENV_FROM_BLOCK = os.getenv("FROM_BLOCK")
 ENV_TO_BLOCK   = os.getenv("TO_BLOCK")
-ENV_PROVIDER = os.getenv("PROVIDER", "https://gnosis-rpc.publicnode.com")
+ENV_PROVIDER = os.getenv("TEST_PROVIDER", "https://gnosis-rpc.publicnode.com")
 
 # Final unified values
 REQ_FROM_BLOCK = args.from_block or (int(ENV_FROM_BLOCK) if ENV_FROM_BLOCK else None)
@@ -264,4 +264,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
